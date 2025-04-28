@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AuthRequest } from "middleware/auth.middleware.ts";
-import { pool } from "config/db.ts";
+import { AuthRequest } from "../middleware/auth.middleware.js";
+import { pool } from "../config/db.js";
 
 export const createComment = async (req: AuthRequest, res: Response) => {
   const { postId, content } = req.body;
