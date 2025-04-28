@@ -36,3 +36,59 @@ export const getCommentsByPost = async (req: Request, res: Response) => {
   );
   return res.json(result.rows);
 };
+
+export const updateComment = async (req: Request, res: Response) => {
+  try {
+    const commentId = req.body.id;
+    const newText = req.body.text;
+
+    if (!commentId || !newText) {
+      return res.status(400).json({ message: "Comment ID va text kerak" });
+    }
+
+    const commentCheck = await pool.query(
+      "SELECT * FROM comments WHERE id = $1",
+      [commentId]
+    );
+
+    if (commentCheck.rows.length === 0) {
+      return res.status(404).json({ message: "Comment topilmadi" });
+    }
+
+    await pool.query(
+      "UPDATE comments SET text = $1, updated_at = NOW() WHERE id = $2",
+      [newText, commentId]
+    );
+
+    return res.json({ message: "Comment yangilandi" });
+  } catch (error) {
+    console.error("Update comment error:", error);
+    return res.status(500).json({ message: "Server xatosi" });
+  }
+};
+
+export const deleteComment = async (req: Request, res: Response) => {
+  try {
+    const commentId = req.query.id;
+
+    if (!commentId) {
+      return res.status(400).json({ message: "Comment ID kerak" });
+    }
+
+    const commentCheck = await pool.query(
+      "SELECT * FROM comments WHERE id = $1",
+      [commentId]
+    );
+
+    if (commentCheck.rows.length === 0) {
+      return res.status(404).json({ message: "Comment topilmadi" });
+    }
+
+    await pool.query("DELETE FROM comments WHERE id = $1", [commentId]);
+
+    return res.json({ message: "Comment o'chirildi" });
+  } catch (error) {
+    console.error("Delete comment error:", error);
+    return res.status(500).json({ message: "Server xatosi" });
+  }
+};

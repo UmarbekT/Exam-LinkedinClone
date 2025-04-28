@@ -3,18 +3,18 @@ import { AuthRequest } from "../middleware/auth.middleware.js";
 import { pool } from "../config/db.js";
 
 export const createBlog = async (req: AuthRequest, res: Response) => {
-  const { title, description } = req.body;
+  const { name, description } = req.body;
   const userId = req.user?.id;
 
-  if (!title) return res.status(400).json({ message: "Blog nomi kerak" });
+  if (!name) return res.status(400).json({ message: "Blog nomi kerak" });
 
   await pool.query(
-    "INSERT INTO blogs (title, description, owner_id) VALUES ($1, $2, $3)",
-    [title, description, userId]
+    "INSERT INTO blogs (name, description, owner_id) VALUES ($1, $2, $3)",
+    [name, description, userId]
   );
 
   return res.status(201).json({ message: "Blog yaratildi" });
-};
+}; //chunmadim qo'shvoman ammo bo'lmayabdi xato
 
 export const getMyBlogs = async (req: AuthRequest, res: Response) => {
   const userId = req.user?.id;
